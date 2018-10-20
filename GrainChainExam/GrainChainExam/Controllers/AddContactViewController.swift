@@ -58,20 +58,7 @@ class AddContactViewController: UIViewController, UINavigationControllerDelegate
     }
     
     @IBAction func saveContactBtnAction(_ sender: UIButton) {
-        do {
-            try trySaveContact()
-            saveContact()
-        } catch FormError.incompleteForm {
-            self.showAlert(message: "Please fill all the information.")
-        } catch FormError.invalidName {
-            self.showAlert(message: "Name or Last name fiels are invalid. (At least 3 characters, no especial characters)")
-        } catch FormError.invalidAge {
-            self.showAlert(message: "Age is invalid")
-        } catch FormError.invalidPhone {
-            self.showAlert(message: "Phone number is invalid. (10 digits exaclty)")
-        } catch {
-            print("unknown error")
-        }
+        saveUserValidation()
     }
     
     override func viewDidLoad() {
@@ -99,6 +86,23 @@ class AddContactViewController: UIViewController, UINavigationControllerDelegate
             if view.isKind(of: UITextField.self)  || view.isKind(of: UIButton.self) || view.isKind(of: UIStackView.self){
                 scrollView.contentView.addSubview(view)
             }
+        }
+    }
+    
+    private func saveUserValidation(){
+        do {
+            try trySaveContact()
+            saveContact()
+        } catch FormError.incompleteForm {
+            self.showAlert(message: "Please fill all the information.")
+        } catch FormError.invalidName {
+            self.showAlert(message: "Name or Last name fiels are invalid. (At least 3 characters, no especial characters)")
+        } catch FormError.invalidAge {
+            self.showAlert(message: "Age is invalid")
+        } catch FormError.invalidPhone {
+            self.showAlert(message: "Phone number is invalid. (10 digits exaclty)")
+        } catch {
+            print("unknown error")
         }
     }
     
@@ -146,5 +150,28 @@ extension AddContactViewController: UIImagePickerControllerDelegate {
         guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
         newContactIamgeView.image = image
         self.dismiss(animated: true, completion: nil)
+    }
+}
+
+//MARK: - TEXTFIELD DELEGATE
+extension AddContactViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            
+            if textField.returnKeyType == .done {
+                saveUserValidation()
+            } else {
+                nextField.becomeFirstResponder()
+            }
+        } else {
+            // Not found, so remove keyboard.
+            textField.resignFirstResponder()
+        }
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.text = textField.text?.trimmingCharacters(in: .whitespaces)
     }
 }

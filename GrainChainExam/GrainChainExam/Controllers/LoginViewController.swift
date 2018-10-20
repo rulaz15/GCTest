@@ -97,3 +97,25 @@ class LoginViewController: UIViewController {
     }
 }
 
+//MARK: - TEXTFIELD DELEGATE
+extension LoginViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            
+            if textField.returnKeyType == .done {
+                checkTextfiels()
+            } else {
+                nextField.becomeFirstResponder()
+            }
+        } else {
+            // Not found, so remove keyboard.
+            textField.resignFirstResponder()
+        }
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.text = textField.text?.trimmingCharacters(in: .whitespaces)
+    }
+}
