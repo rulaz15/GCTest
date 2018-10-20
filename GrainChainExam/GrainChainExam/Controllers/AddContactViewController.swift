@@ -87,7 +87,11 @@ class AddContactViewController: UIViewController, UINavigationControllerDelegate
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        
+        nameTF.text = ""
+        lastNameTF.text = ""
+        ageTF.text = ""
+        phoneTF.text = ""
+        newContactIamgeView.image = #imageLiteral(resourceName: "userImg.png")
     }
     
     private func setUpScrollView() {
